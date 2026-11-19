@@ -1,0 +1,286 @@
+{
+ "schema": "gina-poc-rollout/v2",
+ "branch_prefix": "poc-mr/",
+ "strip_prefix": "methodology/files/",
+ "skill_features": {
+  "gitlab": "gitlab",
+  "jira": "jira",
+  "build-watch": "gitlab",
+  "code-conventions": "code_conventions",
+  "product-ui": "product_ui"
+ },
+ "features": {
+  "gitlab": "у инстанса есть прокси к GitLab",
+  "jira": "у инстанса есть прокси к Jira",
+  "code_conventions": "на шаге 2 составлен навык code-conventions",
+  "product_ui": "на шаге 2 составлен навык product-ui"
+ },
+ "note": "Один элемент = один MR в ветку POC. Элемент с полем feature ставится, только если признак включён в журнале мастера (scripts/wizard_state.py feature …). Элементы generated составляет мастер на шаге 2 из шаблонов methodology/templates/. Порядок: навыки → правила исполнителя → агенты → правила планировщика, диспетчера, завершения → [переключение инстанса на ветку POC] → регламент.",
+ "items": [
+  {
+   "id": "01",
+   "slug": "skill-project",
+   "kind": "skill",
+   "name": "project",
+   "files": [
+    "methodology/files/skills/project/skill.json",
+    "methodology/files/skills/project/SKILL.md"
+   ],
+   "title": "POC 01: навык project — паспорт и карта проекта",
+   "purpose": "Даёт агентам сведения о проекте, собранные на шаге 2 мастера: что это за продукт, где код, ветки, сборки, стенды, задачи, люди. Составлен мастером по ответам оператора и результатам анализа.",
+   "effect": "В ветке POC появится навык project.",
+   "depends": [],
+   "generated": true
+  },
+  {
+   "id": "02",
+   "slug": "skill-gitlab",
+   "kind": "skill",
+   "name": "gitlab",
+   "files": [
+    "methodology/files/skills/gitlab/skill.json",
+    "methodology/files/skills/gitlab/SKILL.md"
+   ],
+   "title": "POC 02: навык gitlab — работа с GitLab через прокси Gina",
+   "purpose": "Учит агента ходить в GitLab без токена, находить репозиторий по точному пути, оформлять merge request и честно читать статус сборки.",
+   "effect": "В ветке POC появится навык gitlab.",
+   "depends": [],
+   "feature": "gitlab"
+  },
+  {
+   "id": "03",
+   "slug": "skill-jira",
+   "kind": "skill",
+   "name": "jira",
+   "files": [
+    "methodology/files/skills/jira/skill.json",
+    "methodology/files/skills/jira/SKILL.md"
+   ],
+   "title": "POC 03: навык jira — задачи в Jira через прокси Gina",
+   "purpose": "Учит агента читать задачу целиком, оставлять комментарии и делать только разрешённые переходы статусов (не закрывать задачи за человека).",
+   "effect": "В ветке POC появится навык jira.",
+   "depends": [],
+   "feature": "jira"
+  },
+  {
+   "id": "04",
+   "slug": "skill-team-communication",
+   "kind": "skill",
+   "name": "team-communication",
+   "files": [
+    "methodology/files/skills/team-communication/skill.json",
+    "methodology/files/skills/team-communication/SKILL.md"
+   ],
+   "title": "POC 04: навык team-communication — вопросы и итоги людям",
+   "purpose": "Задаёт правила общения: отвечать в ту же ветку разговора, один конкретный вопрос, итог со ссылками и статусом проверок.",
+   "effect": "В ветке POC появится навык team-communication.",
+   "depends": []
+  },
+  {
+   "id": "05",
+   "slug": "skill-sdlc-workflow",
+   "kind": "skill",
+   "name": "sdlc-workflow",
+   "files": [
+    "methodology/files/skills/sdlc-workflow/skill.json",
+    "methodology/files/skills/sdlc-workflow/SKILL.md"
+   ],
+   "title": "POC 05: навык sdlc-workflow — разбор → реализация → ревью → передача",
+   "purpose": "Описывает вход, выход и критерий готовности каждого шага работы: формат плана разбора, требования к merge request-у, формат вердикта ревью.",
+   "effect": "В ветке POC появится навык sdlc-workflow.",
+   "depends": []
+  },
+  {
+   "id": "06",
+   "slug": "skill-development-and-testing",
+   "kind": "skill",
+   "name": "development-and-testing",
+   "files": [
+    "methodology/files/skills/development-and-testing/skill.json",
+    "methodology/files/skills/development-and-testing/SKILL.md"
+   ],
+   "title": "POC 06: навык development-and-testing — проверка правок",
+   "purpose": "Говорит, откуда брать проверки репозитория, что можно запускать в общем поде исполнителя, а что только в CI, и как записывать непроверенное.",
+   "effect": "В ветке POC появится навык development-and-testing.",
+   "depends": []
+  },
+  {
+   "id": "07",
+   "slug": "skill-build-watch",
+   "kind": "skill",
+   "name": "build-watch",
+   "files": [
+    "methodology/files/skills/build-watch/skill.json",
+    "methodology/files/skills/build-watch/SKILL.md"
+   ],
+   "title": "POC 07: навык build-watch — заявка на побудку по окончании сборки",
+   "purpose": "Учит агента не ждать сборку внутри сеанса работы: оставить заявку, уснуть и продолжить после побудки. Сам по себе ничего не будит — побудку выполняет регламент «СТОРОЖ СБОРКИ» (последний элемент).",
+   "effect": "В ветке POC появится навык build-watch.",
+   "depends": [],
+   "feature": "gitlab"
+  },
+  {
+   "id": "08",
+   "slug": "skill-code-conventions",
+   "kind": "skill",
+   "name": "code-conventions",
+   "files": [
+    "methodology/files/skills/code-conventions/skill.json",
+    "methodology/files/skills/code-conventions/SKILL.md"
+   ],
+   "title": "POC 08: навык code-conventions — соглашения по коду репозиториев проекта",
+   "purpose": "Говорит агенту, где в каждом репозитории лежат правила кода и какие соглашения главные. Составлен мастером по результатам анализа репозиториев на шаге 2.",
+   "effect": "В ветке POC появится навык code-conventions.",
+   "depends": [],
+   "feature": "code_conventions",
+   "generated": true
+  },
+  {
+   "id": "09",
+   "slug": "skill-product-ui",
+   "kind": "skill",
+   "name": "product-ui",
+   "files": [
+    "methodology/files/skills/product-ui/skill.json",
+    "methodology/files/skills/product-ui/SKILL.md"
+   ],
+   "title": "POC 09: навык product-ui — разделы и сценарии интерфейса продукта",
+   "purpose": "Даёт агентам карту интерфейса продукта и основные пользовательские сценарии. Составлен мастером по результатам обхода интерфейса на шаге 2.",
+   "effect": "В ветке POC появится навык product-ui.",
+   "depends": [],
+   "feature": "product_ui",
+   "generated": true
+  },
+  {
+   "id": "10",
+   "slug": "role-worker-rules",
+   "kind": "role",
+   "name": "worker/worker_rules",
+   "files": [
+    "methodology/files/roles/worker/role.json",
+    "methodology/files/roles/worker/worker_rules.md"
+   ],
+   "title": "POC 10: правила исполнителя (worker_rules)",
+   "purpose": "Общие правила для всех агентов в работе: границы задачи, только проверенные факты, доступ через прокси, бережное отношение к общему поду, уборка, запрет необратимого без задания.",
+   "effect": "Правила роли «исполнитель» (worker) в ветке POC. После переключения инстанса действуют на все сеансы работы всех агентов.",
+   "depends": []
+  },
+  {
+   "id": "11",
+   "slug": "agent-analyst",
+   "kind": "agent",
+   "name": "analyst",
+   "files": [
+    "methodology/files/agents/analyst/agent.json",
+    "methodology/files/agents/analyst/system-prompt.md"
+   ],
+   "title": "POC 11: агент analyst — разбор задачи",
+   "purpose": "Агент, который превращает задачу из трекера или просьбу из чата в план с критериями приёмки. Код не меняет.",
+   "effect": "В ветке POC появится агент analyst.",
+   "depends": [
+    "01",
+    "04",
+    "05"
+   ]
+  },
+  {
+   "id": "12",
+   "slug": "agent-developer",
+   "kind": "agent",
+   "name": "developer",
+   "files": [
+    "methodology/files/agents/developer/agent.json",
+    "methodology/files/agents/developer/system-prompt.md"
+   ],
+   "title": "POC 12: агент developer — реализация и merge request",
+   "purpose": "Агент, который делает минимальную правку по плану, проверяет доступным способом и открывает merge request.",
+   "effect": "В ветке POC появится агент developer.",
+   "depends": [
+    "01",
+    "04",
+    "05",
+    "06"
+   ]
+  },
+  {
+   "id": "13",
+   "slug": "agent-reviewer",
+   "kind": "agent",
+   "name": "reviewer",
+   "files": [
+    "methodology/files/agents/reviewer/agent.json",
+    "methodology/files/agents/reviewer/system-prompt.md"
+   ],
+   "title": "POC 13: агент reviewer — независимое ревью",
+   "purpose": "Агент, который сверяет merge request с критериями приёмки и выносит вердикт комментарием. Код не меняет.",
+   "effect": "В ветке POC появится агент reviewer.",
+   "depends": [
+    "01",
+    "05"
+   ]
+  },
+  {
+   "id": "14",
+   "slug": "role-planner-rules",
+   "kind": "role",
+   "name": "feature-lead/planner_rules",
+   "files": [
+    "methodology/files/roles/feature-lead/role.json",
+    "methodology/files/roles/feature-lead/planner_rules.md"
+   ],
+   "title": "POC 14: правила планировщика (planner_rules) — порядок работы",
+   "purpose": "Задаёт порядок: analyst → developer → reviewer → передача человеку; правила кругов доработки, ожиданий и отказов среды.",
+   "effect": "Правила роли «планировщик» (feature-lead) в ветке POC. После переключения инстанса задают порядок всей работы.",
+   "depends": [
+    "11",
+    "12",
+    "13"
+   ]
+  },
+  {
+   "id": "15",
+   "slug": "role-chooser-rules",
+   "kind": "role",
+   "name": "dispatcher/chooser_rules",
+   "files": [
+    "methodology/files/roles/dispatcher/role.json",
+    "methodology/files/roles/dispatcher/chooser_rules.md"
+   ],
+   "title": "POC 15: правила диспетчера входящих (chooser_rules)",
+   "purpose": "Говорит, к какой работе отнести новую просьбу: по ключу задачи, по ветке разговора, новая работа для новой просьбы.",
+   "effect": "Правила роли «диспетчер входящих» (dispatcher) в ветке POC. После переключения действуют на все новые входящие.",
+   "depends": []
+  },
+  {
+   "id": "16",
+   "slug": "role-facilitator-rules",
+   "kind": "role",
+   "name": "delivery-lead/facilitator_rules",
+   "files": [
+    "methodology/files/roles/delivery-lead/role.json",
+    "methodology/files/roles/delivery-lead/facilitator_rules.md"
+   ],
+   "title": "POC 16: правила завершения и напоминаний (facilitator_rules)",
+   "purpose": "Когда работа считается законченной, кому и как часто напоминать, когда сообщать владельцу о зависшем ожидании.",
+   "effect": "Правила роли «завершение и напоминания» (delivery-lead) в ветке POC.",
+   "depends": []
+  },
+  {
+   "id": "17",
+   "slug": "automation-build-watch",
+   "kind": "automation",
+   "name": "СТОРОЖ СБОРКИ",
+   "files": [],
+   "title": "POC 17: регламент «СТОРОЖ СБОРКИ» — побудка работы по окончании сборки",
+   "purpose": "Регламент раз в минуту без участия модели разбирает заявки build-watch: смотрит сборку в GitLab, будит работу входящим, снимает заявку. Без него работа, ждущая сборку, сама не проснётся.",
+   "effect": "Регламент создаётся на инстансе через API выключенным (после переключения инстанса на ветку POC), затем этот MR кладёт его определение в Git — дальше оно меняется только через MR. Включение — отдельным шагом после согласия оператора.",
+   "depends": [
+    "07",
+    "11"
+   ],
+   "feature": "gitlab",
+   "needs_live": true,
+   "template": "methodology/automation-templates/build-watch"
+  }
+ ]
+}

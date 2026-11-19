@@ -1,0 +1,116 @@
+{
+  "title": "Инстанс Gina",
+  "window_minutes": 60,
+  "quiet_hours_utc": null,
+  "quiet_hours_note": "quiet_hours_utc: [с, по) в часах UTC, например [19, 5] = с 22:00 до 08:00 по Москве; null — тихих часов нет. В тихие часы уходит только критичное, остальное ждёт в очереди.",
+  "keep_runs_days": 14,
+  "collectors": [
+    "pods",
+    "logs",
+    "jcode_ops",
+    "top",
+    "api",
+    "urls"
+  ],
+  "memory_warn_share": 0.85,
+  "jcode_ops": {
+    "pod_regex": "jcode-agent-\\d+$",
+    "container": "jcode-agent",
+    "path": "/data/api/operations",
+    "limit": 10000,
+    "warn": 8500,
+    "crit": 9500
+  },
+  "log_targets": [
+    {
+      "name": "gina-evd",
+      "resource": "deploy/gina-evd",
+      "patterns": [
+        {
+          "key": "operation_capacity",
+          "title": "ядро не может создать сессию агента: исчерпан предел записей операций на поде исполнителя",
+          "regex": "HTTP 503 operation_capacity",
+          "crit": 1
+        },
+        {
+          "key": "chooser_paused",
+          "title": "входящая просьба не распределена в дело и поставлена на паузу",
+          "regex": "chooser retries paused",
+          "warn": 1
+        },
+        {
+          "key": "execution_failed",
+          "title": "сорванные запуски агентов",
+          "regex": "execution failed",
+          "warn": 3
+        },
+        {
+          "key": "delivery_failed",
+          "title": "сообщения агентов не доставлены людям",
+          "regex": "adapter provider delivery failed",
+          "warn": 5
+        },
+        {
+          "key": "prompt_source_error",
+          "title": "ошибка применения методологии из Git",
+          "regex": "prompt-source.*(error|failed)",
+          "crit": 1
+        }
+      ]
+    },
+    {
+      "name": "litellm",
+      "resource": "deploy/litellm",
+      "error_regex": "(?i)\\bERROR\\b|Exception",
+      "patterns": [
+        {
+          "key": "chat_ok",
+          "title": "успешные вызовы модели",
+          "regex": "chat/completions HTTP/[0-9.]+\\\" 200"
+        },
+        {
+          "key": "rate_limit",
+          "title": "модель отвечает «слишком много запросов» (429)",
+          "regex": "chat/completions HTTP/[0-9.]+\\\" 429|RateLimitError",
+          "warn": 5,
+          "crit": 30
+        },
+        {
+          "key": "server_errors",
+          "title": "ошибки сервера модели (5xx)",
+          "regex": "chat/completions HTTP/[0-9.]+\\\" 5\\d\\d",
+          "warn": 5
+        },
+        {
+          "key": "conn_errors",
+          "title": "обрывы соединения с провайдером модели",
+          "regex": "APIConnectionError",
+          "warn": 20
+        }
+      ]
+    }
+  ],
+  "urls": [],
+  "urls_note": "Адреса стендов продукта подставляет команда watch.py --init-config из журнала мастера (ui_urls).",
+  "pg_queries_note": "Запросы ниже — образец для ядра 1.2.x. Перед включением сборщика pg сверь имена таблиц и столбцов с information_schema этого инстанса и перенеси исправленные запросы в ключ pg_queries.",
+  "pg_queries_example": [
+    {
+      "key": "chooser_paused",
+      "title": "входящие на паузе маршрутизации",
+      "warn": 1,
+      "sql": "select left(id::text,8), left(title,80) from gina_evd.tracker_task where state='pending' and chooser_retry_paused_at is not null"
+    },
+    {
+      "key": "stuck_infra",
+      "title": "дела, ждущие восстановления среды",
+      "warn": 1,
+      "sql": "select left(id::text,8), left(title,60), left(waiting_for,80) from gina_evd.supercontext where status='WAITING' and waiting_for ilike 'infra_blocked%'"
+    },
+    {
+      "key": "automation_stuck",
+      "title": "прогоны регламентов, не завершённые дольше 3 часов",
+      "warn": 1,
+      "sql": "select left(automation_id::text,8), sequence, state from gina_evd.automation_run where state not in ('succeeded','failed','cancelled') and ts_create < now() - interval '3 hours'"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "СТОРОЖ СБОРКИ",
+  "policy": {},
+  "min_interval_seconds": 60,
+  "max_interval_seconds": 2592000,
+  "concurrency_limit": 1,
+  "budget": {},
+  "escalation": {},
+  "bindings": [],
+  "dispatch_mode": "direct_once",
+  "dispatch_agent": "analyst",
+  "dispatch_skills": [
+    "build-watch",
+    "gitlab"
+  ]
+}

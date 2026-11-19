@@ -1,0 +1,20 @@
+# создаётся мастером установки
+state/
+watcher/runs/
+watcher/config.json
+watcher/state.json
+watcher/outbox.json
+watcher/cron.log
+watcher/watch.reference.py
+
+# секреты хранятся вне каталога (~/.gina-poc); на случай ошибки
+*.env
+kubeconfig*.yaml
+
+__pycache__/
+*.pyc
+
+# навыки проекта составляет мастер на шаге 2 — в поставку не входят
+methodology/files/skills/project/SKILL.md
+methodology/files/skills/code-conventions/SKILL.md
+methodology/files/skills/product-ui/SKILL.md

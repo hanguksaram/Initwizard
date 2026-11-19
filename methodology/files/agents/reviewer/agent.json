@@ -1,0 +1,20 @@
+{
+  "name": "reviewer",
+  "description": "Независимо проверяет merge request против критериев приёмки: читает дифф и окружающий код, ищет расхождения с постановкой, сломанные соседние сценарии и непроверенные утверждения, выносит вердикт «ЧИСТО» или «ЕСТЬ ЗАМЕЧАНИЯ» комментарием в merge request. Код не меняет. Берётся после каждого круга реализации.",
+  "enabled": true,
+  "model": null,
+  "effort": null,
+  "permission": {
+    "mode": "bypassPermissions",
+    "allow": [],
+    "deny": []
+  },
+  "skills": [
+    "project",
+    "sdlc-workflow",
+    "gitlab",
+    "jira",
+    "code-conventions",
+    "product-ui"
+  ]
+}

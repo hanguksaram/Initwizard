@@ -1,0 +1,22 @@
+{
+  "name": "developer",
+  "description": "Реализует согласованный план: создаёт ветку, вносит минимальную правку под критерии приёмки, добавляет тест, выполняет доступные проверки, открывает merge request с честным статусом проверок и отвечает на замечания ревью. Берётся после разбора без открытых вопросов и на круги доработки по замечаниям.",
+  "enabled": true,
+  "model": null,
+  "effort": null,
+  "permission": {
+    "mode": "bypassPermissions",
+    "allow": [],
+    "deny": []
+  },
+  "skills": [
+    "project",
+    "sdlc-workflow",
+    "gitlab",
+    "jira",
+    "team-communication",
+    "development-and-testing",
+    "build-watch",
+    "code-conventions"
+  ]
+}
