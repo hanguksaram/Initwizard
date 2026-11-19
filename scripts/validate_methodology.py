@@ -35,7 +35,7 @@ for n in sorted(os.listdir(os.path.join(ROOT, 'skills'))):
         if off(it):
             continue                                   # признак выключен: навык не ставится
         if not os.path.exists(md) or 'ЗАПОЛНИ' in open(md, encoding='utf-8').read():
-            pending.append(n); skills.add(n); continue   # составляется на шаге 2 мастера
+            pending.append(n); skills.add(n); continue   # составляется на шаге 3 мастера
     elif off(it):
         continue
     if m.get('name') != n or not NAME.match(n): P.append('skills/%s: имя папки и name должны совпадать и быть вида a-z0-9-' % n)
@@ -91,7 +91,7 @@ for i in man['items']:
         if dep not in ids or ids.index(dep) >= ids.index(i['id']): P.append('ROLLOUT.json: элемент %s зависит от %s, который идёт не раньше' % (i['id'], dep))
 print('\n'.join(P) if P else 'OK: навыков к установке %d, агентов %d, элементов наката %d' % (len(skills), len(os.listdir(os.path.join(ROOT, 'agents'))), len(ids)))
 if pending and not P:
-    print('Ещё не составлены мастером (шаг 2): %s' % ', '.join(pending))
+    print('Ещё не составлены мастером (шаг 3): %s' % ', '.join(pending))
 wanted = [f for f in man.get('features') or {} if c.feature(f)]
 if not P:
     print('Включённые признаки: %s' % (', '.join(wanted) or 'нет'))

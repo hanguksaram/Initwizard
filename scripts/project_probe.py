@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Шаг 2 мастера: сбор фактов о проекте. Только чтение. Ничего не пишет ни в репозитории, ни на инстанс, ни на стенды.
+"""Шаг 3 мастера: сбор фактов о проекте. Только чтение. Ничего не пишет ни в репозитории, ни на инстанс, ни на стенды.
 
   python3 scripts/project_probe.py detect        — какие внешние системы подключены к инстансу (GitLab, Jira, каналы общения)
   python3 scripts/project_probe.py repos         — кодовая база: репозитории, стеки, ветки, README
@@ -15,7 +15,7 @@
 получилось, напрямую токеном из gitlab.env. Источник записывается в факты.
 
 Результат: state/project/facts.json (разделы по командам, у каждого — время и источник), state/project/conventions/…,
-state/project/ui.json. Это сырьё: навыки проекта по нему составляет агент (wizard/2-project.md).
+state/project/ui.json. Это сырьё: навыки проекта по нему составляет агент (wizard/3-project.md).
 """
 import json, os, re, sys, urllib.parse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

@@ -63,7 +63,7 @@ def check_gitlab():
         st, b = g.p('GET', '/repository/branches/' + c.urllib.parse.quote(g.branch, safe=''))
         add('GitLab', 'ветка POC ' + g.branch, 'OK' if st == 200 else 'WARN', ('голова ' + b['commit']['short_id']) if st == 200 else 'в журнале записана, но в репозитории её нет')
     else:
-        add('GitLab', 'ветка POC', 'MISS', 'будет создана в начале шага 3')
+        add('GitLab', 'ветка POC', 'MISS', 'будет создана в начале шага 4')
 
 
 def check_gina():
@@ -77,7 +77,7 @@ def check_gina():
     if not ok:
         return
     if not env.get('GINA_OWNER_TOKEN'):
-        add('Gina', 'токен владельца', 'FAIL', 'не вписан в gina.env — шаги 3 и 5 без него невозможны')
+        add('Gina', 'токен владельца', 'FAIL', 'не вписан в gina.env — шаги 4 и 6 без него невозможны')
         return
     st, ps = g.call('GET', '/api/prompt-source')
     if st != 200 or not isinstance(ps, dict):
@@ -146,7 +146,7 @@ def check_optional():
         add('уведомления', 'Telegram', 'OK' if ok and n.get('TELEGRAM_CHAT_ID') else 'WARN',
             ('бот @%s' % d['result'].get('username')) if ok else 'getMe → %s' % st)
     elif kind == 'mattermost':
-        add('уведомления', 'Mattermost webhook', 'OK' if n.get('MATTERMOST_WEBHOOK_URL') else 'WARN', 'проверяется тестовым сообщением на шаге 3')
+        add('уведомления', 'Mattermost webhook', 'OK' if n.get('MATTERMOST_WEBHOOK_URL') else 'WARN', 'проверяется тестовым сообщением на шаге 4')
     else:
         add('уведомления', 'канал', 'MISS', 'не задан: тревоги будут только в файлах и в сессии агента')
     j = c.load_env('jira.env'); key = c.settings().get('tracker_project')
@@ -158,7 +158,7 @@ def check_optional():
         add('Jira', 'прямой доступ', 'MISS', 'не задано: агентам Gina не нужно (они ходят через прокси), мастеру — только для удобства')
     u = c.load_env('ui.env')
     add('интерфейс', 'тестовая учётная запись', 'OK' if u.get('UI_USER') and u.get('UI_PASSWORD') else 'MISS',
-        'задана' if u.get('UI_USER') and u.get('UI_PASSWORD') else 'не задана: обход интерфейса продукта на шаге 2 дойдёт только до страницы входа')
+        'задана' if u.get('UI_USER') and u.get('UI_PASSWORD') else 'не задана: обход интерфейса продукта на шаге 3 дойдёт только до страницы входа')
 
 
 def main():

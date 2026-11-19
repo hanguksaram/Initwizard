@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Шаг 2 мастера: накат POC-методологии малыми merge request-ами в ветку POC. Один элемент ROLLOUT.json = один MR.
+"""Шаг 4 мастера: накат POC-методологии малыми merge request-ами в ветку POC. Один элемент ROLLOUT.json = один MR.
 
   python3 scripts/mr_rollout.py plan                  — таблица элементов и состояние
   python3 scripts/mr_rollout.py allow-open --confirmed-by "<ответ оператора>"
@@ -129,10 +129,10 @@ def files_of(item):
     for f in item['files']:
         full = os.path.join(c.PACK, f)
         if item.get('generated') and not os.path.exists(full):
-            sys.exit('элемент %s составляет мастер на шаге 2, а файла %s ещё нет — см. wizard/2-project.md' % (item['id'], f))
+            sys.exit('элемент %s составляет мастер на шаге 3, а файла %s ещё нет — см. wizard/3-project.md' % (item['id'], f))
         text = open(full, encoding='utf-8').read()
         if item.get('generated') and 'ЗАПОЛНИ' in text:
-            sys.exit('в %s остались незаполненные места шаблона (метка «ЗАПОЛНИ») — допиши навык по wizard/2-project.md' % f)
+            sys.exit('в %s остались незаполненные места шаблона (метка «ЗАПОЛНИ») — допиши навык по wizard/3-project.md' % f)
         text = render_agent(text) if f.endswith('/agent.json') else render(text)
         out.append((f[len(MANIFEST['strip_prefix']):], text))
     return out
@@ -282,7 +282,7 @@ def cmd_plan(_):
         if not ok_app:
             print('%s  %-30s %-10s не применимо: %s' % (i['id'], i['slug'], '—', why_na)); continue
         if i.get('generated') and (not os.path.exists(os.path.join(c.PACK, i['files'][-1])) or 'ЗАПОЛНИ' in open(os.path.join(c.PACK, i['files'][-1]), encoding='utf-8').read()):
-            print('%s  %-30s %-10s навык ещё не составлен (шаг 2 мастера)' % (i['id'], i['slug'], st)); continue
+            print('%s  %-30s %-10s навык ещё не составлен (шаг 3 мастера)' % (i['id'], i['slug'], st)); continue
         if i['kind'] == 'automation' and not c.load_state('automation.json'):
             where = 'создаётся через API после переключения инстанса (scripts/automation_setup.py), затем MR'
         else:

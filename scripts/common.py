@@ -23,7 +23,7 @@ SECRET_FILES = {
     'notify.env': ('optional', ['NOTIFY_KIND', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'MATTERMOST_WEBHOOK_URL'],
                    'куда сторож шлёт тревоги: telegram | mattermost | none'),
     'jira.env': ('optional', ['JIRA_URL', 'JIRA_TOKEN'], 'чтение задач Jira напрямую из сессии агента (агентам Gina не нужно: они ходят через прокси)'),
-    'ui.env': ('optional', ['UI_USER', 'UI_PASSWORD'], 'тестовая учётная запись для обхода интерфейса продукта на шаге 2'),
+    'ui.env': ('optional', ['UI_USER', 'UI_PASSWORD'], 'тестовая учётная запись для обхода интерфейса продукта на шаге 3'),
 }
 
 
@@ -140,7 +140,7 @@ def kubectl(args, timeout=60, stdin=None):
 
 
 WIZARD = 'wizard.json'
-STEPS = {'1': 'доступы', '2': 'проект', '3': 'методология', '4': 'сторож инстанса', '5': 'итоговая проверка', '6': 'итог и FAQ', '7': 'запуск сторожа'}
+STEPS = {'1': 'доступы', '2': 'подключения', '3': 'проект', '4': 'методология', '5': 'сторож инстанса', '6': 'итоговая проверка', '7': 'итог и FAQ', '8': 'запуск сторожа'}
 
 
 def now():
@@ -175,6 +175,22 @@ def proxy_fetch(paths, timeout=120):
         raise RuntimeError('чтение через прокси Gina не удалось (нужно право exec в под gina-evd): %s' % (err or out).strip()[:160])
     data = json.loads(out)
     return {p: (v.get('s'), v.get('b'), v.get('h') or {}) for p, v in data.items()}
+
+
+def core_call(requests, timeout=120):
+    """Запросы к ядру Gina изнутри его пода (kubectl exec), по внутреннему адресу — так же, как к ядру обращаются
+    агенты анклава. requests — список {'method', 'path', 'body'?}; возвращает список (статус, данные) в том же порядке.
+    Весь список, включая тела с секретами, уходит в под через стандартный ввод: в аргументах командной строки и
+    в журналах kubectl секретов нет. Нужно право exec в под gina-evd."""
+    script = (r'const L="http://localhost:8080";let s="";process.stdin.on("data",d=>s+=d).on("end",async()=>{const out=[];'
+              r'for(const q of JSON.parse(s)){try{const h=Object.assign({},q.headers||{});if(q.body!==undefined)h["content-type"]="application/json";'
+              r'const r=await fetch(L+q.path,{method:q.method||"GET",headers:h,body:q.body!==undefined?JSON.stringify(q.body):undefined});'
+              r'const t=await r.text();let b;try{b=JSON.parse(t)}catch{b=t.slice(0,200000)};out.push({s:r.status,b:b})}'
+              r'catch(e){out.push({s:0,b:String(e.message)})}}process.stdout.write(JSON.stringify(out))})')
+    rc, out, err = kubectl(['exec', '-i', 'deploy/gina-evd', '--', 'node', '-e', script], timeout=timeout, stdin=json.dumps(list(requests)))
+    if rc != 0:
+        raise RuntimeError('обращение к ядру Gina через kubectl не удалось (нужно право exec в под gina-evd): %s' % (err or out).strip()[:160])
+    return [(v.get('s'), v.get('b')) for v in json.loads(out)]
 
 
 def confirm(action, text):

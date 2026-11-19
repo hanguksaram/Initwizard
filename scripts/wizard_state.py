@@ -2,7 +2,7 @@
 """Журнал мастера установки: state/wizard.json. Секретов в журнале нет.
 
   python3 scripts/wizard_state.py show                      — где остановились (читать ПЕРВЫМ делом в любой новой сессии)
-  python3 scripts/wizard_state.py step <1-7> start|done|partial ["пояснение"]
+  python3 scripts/wizard_state.py step <1-8> start|done|partial ["пояснение"]
   python3 scripts/wizard_state.py position "<что делаю прямо сейчас и чего жду от оператора>"
   python3 scripts/wizard_state.py set <ключ> <значение>     — несекретная настройка
   python3 scripts/wizard_state.py feature <признак> on|off "<основание>"   — gitlab | jira | code_conventions | product_ui

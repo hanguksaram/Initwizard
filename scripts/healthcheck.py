@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Шаг 4 мастера: итоговая проверка после установки. Ничего не меняет.
+"""Шаг 6 мастера: итоговая проверка после установки. Ничего не меняет.
 
 Запуск: python3 scripts/healthcheck.py
 Проверяет: доступы (как на шаге 1), поды инстанса, прокси GitLab и Jira изнутри пространства, какую ветку читает
@@ -58,11 +58,27 @@ if inside:
     g, j = inside.get('gitlab', {}), inside.get('jira', {})
     for key, title, d in (('gitlab', 'GitLab без токена', g), ('jira', 'Jira без токена', j)):
         if not c.feature(key):
-            add('прокси Gina', title, 'MISS', 'к этому проекту не применимо: признак %s выключен на шаге 2' % key)
+            add('прокси Gina', title, 'MISS', 'к этому проекту не применимо: признак %s выключен на шаге 3' % key)
     if c.feature('gitlab'): add('прокси Gina', 'GitLab без токена', 'OK' if g.get('status') == 200 else 'FAIL', 'пользователь %s' % g.get('user') if g.get('status') == 200 else 'HTTP %s' % g.get('status'))
     if c.feature('jira'): add('прокси Gina', 'Jira без токена', 'OK' if j.get('status') == 200 else 'FAIL', 'пользователь %s' % j.get('user') if j.get('status') == 200 else 'HTTP %s' % j.get('status'))
     convo = [x for x in inside.get('usage', {}).get('items', []) if x.get('direction') == 'conversation']
     add('прокси Gina', 'каналы общения', 'OK' if convo else 'WARN', ', '.join(x['name'] for x in convo)[:140] or 'привязок разговоров нет: просьбы из чата до агентов не дойдут')
+
+# 3а. подключения, созданные мастером на шаге 2
+for x in (c.load_state('adapters.json', {'items': []}) or {}).get('items', []):
+    try:
+        (s1, d1), (s2, d2) = c.core_call([{'path': '/api/adapters/instances/%s' % x['instance_id']},
+                                          {'path': '/api/adapters/instances/%s/healthcheck' % x['instance_id']}])
+    except Exception:
+        add('подключения', x['name'], 'WARN', 'нет права exec или под недоступен — не проверено'); continue
+    hc = (d2 or {}).get('healthcheck') if isinstance(d2, dict) else None
+    if s1 != 200 or not isinstance(d1, dict) or d1.get('state') != 'active':
+        add('подключения', x['name'], 'FAIL', 'создано мастером, но сейчас не действует (состояние: %s)' % (d1.get('state') if isinstance(d1, dict) else 'HTTP %s' % s1))
+    elif not hc:
+        add('подключения', x['name'], 'WARN', 'действует; проверка связи не запускалась — python3 scripts/adapter_setup.py check')
+    else:
+        add('подключения', x['name'], 'OK' if hc.get('status') == 'healthy' else 'FAIL' if hc.get('status') == 'unhealthy' else 'WARN',
+            '%s (%s), проверено %s; адрес для агентов: %s' % (hc.get('status'), hc.get('message'), str(hc.get('checked_at'))[:16], x.get('address')))
 
 # 4. какую ветку читает инстанс
 is_live = False
@@ -149,7 +165,7 @@ if os.path.exists(sp):
     add('сторож инстанса', 'последний запуск', 'OK', '%s UTC (%.0f мин назад), открытых тревог: %d, ждёт отправки: %d' % (last[:16], age_min(last), len(s.get('open') or {}), len(s.get('outbox') or [])))
     limit = (int(plan.get('interval_minutes') or 60)) * 2
     if not plan.get('schedule'):
-        add('сторож инстанса', 'расписание', 'MISS', 'расписание ещё не установлено (шаг 7)')
+        add('сторож инстанса', 'расписание', 'MISS', 'расписание ещё не установлено (шаг 8)')
     elif not cron:
         add('сторож инстанса', 'расписание', 'WARN', 'установлено («%s»), но по расписанию сторож ещё ни разу не запускался — проверь после первого срабатывания' % plan['schedule'][:60])
     else:
